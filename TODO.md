@@ -1,0 +1,10 @@
+- [x] Update phone number in footer.jsx to +91 9929305979
+- [x] Add WhatsApp link with icon for +91 8619224377
+- [x] Update email to girdharmahawer@gmail.com
+- [x] Update address to Okay Plus Square, Jaipur
+- [x] Update header.jsx contact object (email and phone)
+- [x] Update contact/page.jsx (phone, email, address)
+- [x] Update back-to-top.jsx WhatsApp link
+- [x] Update contact page to show both phone numbers
+- [x] Add social media icons below contact form in contact/page.jsx
+- [x] Add social media icons below address in footer.jsx
