@@ -809,7 +809,7 @@ const TestimonialManagementContent = () => {
                   Edit
                 </button>
                 <button
-                  onClick={() => handleDelete(testimonial.id)}
+                  onClick={() => handleDeleteClick(testimonial.id)}
                   className="flex-1 bg-red-600 text-white py-2 px-3 rounded text-sm font-medium hover:bg-red-700 transition"
                 >
                   Delete

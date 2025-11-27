@@ -8,7 +8,7 @@ import { Toaster } from 'react-hot-toast'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <ThemeProvider>
+    <ThemeProvider storageKey="theme">
       <AuthProvider>
         <App />
         <Toaster position="top-right" />

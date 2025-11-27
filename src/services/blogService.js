@@ -124,19 +124,15 @@ export const blogService = {
       return "/placeholder.svg";
     }
     // If already full URL, return as is
-    if (imagePathStr.startsWith('http')) {
+    if (imagePathStr.startsWith('http://') || imagePathStr.startsWith('https://')) {
       return imagePathStr;
     }
-    // If starts with , use BACKEND_URL
-    if (imagePathStr.startsWith('')) {
-      return `${BACKEND_URL}${imagePathStr}`;
-    }
-    // If it's just a filename, add 
+    // If starts with /, use BACKEND_URL directly
     if (imagePathStr.startsWith('/')) {
       return `${BACKEND_URL}${imagePathStr}`;
     }
-    // Build URL with BACKEND_URL
-    return `${BACKEND_URL}${imagePathStr}`;
+    // If it's just a filename, add / and BACKEND_URL
+    return `${BACKEND_URL}/${imagePathStr}`;
   },
 };
 

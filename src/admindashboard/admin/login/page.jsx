@@ -2,6 +2,7 @@ import React, { useState, useCallback } from "react"
 import { useNavigate } from "react-router-dom"
 import { useTheme } from "../../../contexts/ThemeContext"
 import { useAuth } from "../../../contexts/AuthContext"
+import bhavishLogo from "../../../images/bhavish.jpg"
 
 const Sun = ({ size = 24 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -78,11 +79,15 @@ export default function LoginPage() {
 
       <div className={`${cardBgClass} border rounded-xl p-8 shadow-2xl max-w-md w-full mx-4`}>
         <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-gradient-to-br from-amber-400 to-amber-600 rounded-lg flex items-center justify-center mx-auto mb-4">
-            <span className="text-white font-bold text-2xl">AD</span>
+          <div className="w-20 h-20 mx-auto mb-4 overflow-hidden rounded-full shadow-lg">
+            <img 
+              src={bhavishLogo} 
+              alt="Bhavish Property Logo"
+              className="w-full h-full object-cover"
+            />
           </div>
-          <h1 className={`${textClass} text-3xl font-bold`}>Admin Dashboard</h1>
-          <p className={`${secondaryTextClass} mt-2`}>Sign in to your account</p>
+          <h1 className={`${textClass} text-3xl font-bold`}>Bhavish Property</h1>
+          <p className={`${secondaryTextClass} mt-2`}>Admin Dashboard Login</p>
         </div>
 
         {error && (

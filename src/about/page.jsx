@@ -170,7 +170,7 @@ export default function AboutPage() {
             <div className="relative">
               <div className="bg-light-gray h-96 rounded-lg overflow-hidden shadow-lg">
                 <img
-                  src="/luxury-office-interior.jpg"
+                  src={luxry}
                   alt="About Bhavish Property"
                   className="w-full h-full object-cover"
                 />

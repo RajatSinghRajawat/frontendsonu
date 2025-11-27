@@ -1,11 +1,39 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { Sun, Moon, LogOut, User, Lock } from "../utils/icons"
 import { useTheme } from "../contexts/ThemeContext"
 import { Link } from "react-router-dom"
+import { authService } from "../services/authService"
+import { BACKEND_URL } from "../config/api"
+import bhavishLogo from "../images/bhavish.jpg"
 
-export const Header = ({ adminName }) => {
+export const Header = ({ adminName: propAdminName }) => {
   const { isDarkMode, toggleTheme } = useTheme()
   const [showDropdown, setShowDropdown] = useState(false)
+  const [adminName, setAdminName] = useState(propAdminName || 'Admin')
+  const [adminPhoto, setAdminPhoto] = useState('')
+  const [photoError, setPhotoError] = useState(false)
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const response = await authService.getProfile()
+        const profileData = response?.data || {}
+        if (profileData.name) {
+          setAdminName(profileData.name)
+        }
+        if (profileData.profilePicture) {
+          const photoUrl = profileData.profilePicture.startsWith('http') 
+            ? profileData.profilePicture 
+            : `${BACKEND_URL}${profileData.profilePicture}`
+          setAdminPhoto(photoUrl)
+          setPhotoError(false)
+        }
+      } catch (error) {
+        console.error('Error fetching profile:', error)
+      }
+    }
+    fetchProfile()
+  }, [])
 
   const bgClass = isDarkMode ? "bg-slate-900" : "bg-white"
   const textClass = isDarkMode ? "text-slate-100" : "text-slate-900"
@@ -16,9 +44,9 @@ export const Header = ({ adminName }) => {
       <div className="flex items-center justify-between px-3 sm:px-4 md:px-6 py-2 sm:py-3 md:py-4">
         <div className="flex items-center gap-1.5 sm:gap-2 md:gap-3">
           <img
-            src="/src/images/bhavish.jpg"
+            src={bhavishLogo}
             alt="Logo"
-            className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10  object-cover flex-shrink-0"
+            className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 object-cover flex-shrink-0 rounded-full"
           />
         </div>
 
@@ -42,9 +70,18 @@ export const Header = ({ adminName }) => {
                 isDarkMode ? "hover:bg-slate-800" : "hover:bg-slate-100"
               }`}
             >
-              <div className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 rounded-full bg-gold flex items-center justify-center">
-                <span className="text-slate-900 font-bold text-xs sm:text-xs md:text-sm">A</span>
-              </div>
+              {adminPhoto && !photoError ? (
+                <img 
+                  src={adminPhoto} 
+                  alt={adminName}
+                  className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 rounded-full object-cover border-2 border-gold"
+                  onError={() => setPhotoError(true)}
+                />
+              ) : (
+                <div className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 rounded-full bg-gold flex items-center justify-center">
+                  <span className="text-slate-900 font-bold text-xs sm:text-xs md:text-sm">{adminName ? adminName.charAt(0).toUpperCase() : 'A'}</span>
+                </div>
+              )}
               <span className={`text-xs sm:text-xs md:text-sm font-medium ${textClass} hidden sm:inline`}>{adminName}</span>
             </button>
 
@@ -72,15 +109,18 @@ export const Header = ({ adminName }) => {
                   <Lock size={14} />
                   <span className={`text-sm ${textClass}`}>Change Password</span>
                 </Link>
-                <Link
-                  to="/admin/login"
-                  className={`flex items-center gap-2 px-3 md:px-4 py-2 md:py-3 rounded-b-lg transition-colors border-t ${
+                <button
+                  onClick={() => {
+                    authService.logout()
+                    window.location.href = '/admin/login'
+                  }}
+                  className={`w-full flex items-center gap-2 px-3 md:px-4 py-2 md:py-3 rounded-b-lg transition-colors border-t ${
                     isDarkMode ? "border-slate-700 hover:bg-slate-700" : "border-slate-200 hover:bg-slate-100"
                   }`}
                 >
                   <LogOut size={14} />
                   <span className={`text-sm ${textClass}`}>Logout</span>
-                </Link>
+                </button>
               </div>
             )}
           </div>

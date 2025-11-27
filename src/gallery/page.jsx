@@ -14,7 +14,7 @@ export default function GalleryPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const imagesPerPage = 9
-
+const BACKEND_URL = "https://backendsonu-1.onrender.com/"
   // Fetch gallery items from API
   useEffect(() => {
     const fetchGallery = async () => {
@@ -22,38 +22,38 @@ export default function GalleryPage() {
         setLoading(true)
         setError(null)
         const response = await galleryService.getAllGalleryItems()
+        console.log(response.data  , "response.data")
+        // // Transform API data
+        // const getImageUrl = (img) => {
+        //   if (!img || img === "/placeholder.svg") return "/placeholder.svg"
+        //   if (img.startsWith('http')) return img
+        //   if (img.startsWith('/')) return `${BACKEND_URL}${img}`
+        //   return `${BACKEND_URL}/${img}`
+        // }
         
-        // Transform API data
-        const getImageUrl = (img) => {
-          if (!img || img === "/placeholder.svg") return "/placeholder.svg"
-          if (img.startsWith('http')) return img
-          if (img.startsWith('/')) return `${BACKEND_URL}${img}`
-          return `${BACKEND_URL}/${img}`
-        }
-        
-        const transformedItems = (response.data || []).map((item) => {
-          let imagesArray = []
-          if (item.images) {
-            if (typeof item.images === 'string') {
-              imagesArray = [item.images]
-            } else if (Array.isArray(item.images)) {
-              imagesArray = item.images
-            }
-          }
+        // const transformedItems = (response.data || []).map((item) => {
+        //   let imagesArray = []
+        //   if (item.images) {
+        //     if (typeof item.images === 'string') {
+        //       imagesArray = [item.images]
+        //     } else if (Array.isArray(item.images)) {
+        //       imagesArray = item.images
+        //     }
+        //   }
           
-          // Get image URLs with proper formatting
-          const imageUrls = imagesArray.map(img => getImageUrl(img)).filter(Boolean)
+        //   // Get image URLs with proper formatting
+        //   const imageUrls = imagesArray.map(img => getImageUrl(img)).filter(Boolean)
           
-          return {
-            id: item._id || item.id,
-            title: item.name || "Gallery Item",
-            category: item.description || "Property",
-            mainImage: imageUrls[0] || "/placeholder.svg",
-            allImages: imageUrls.length > 0 ? imageUrls : ["/placeholder.svg"],
-          }
-        })
+        //   return {
+        //     id: item._id || item.id,
+        //     title: item.name || "Gallery Item",
+        //     category: item.description || "Property",
+        //     mainImage: imageUrls[0] || "/placeholder.svg",
+        //     allImages: imageUrls.length > 0 ? imageUrls : ["/placeholder.svg"],
+        //   }
+        // })
         
-        setGalleryItems(transformedItems)
+        setGalleryItems(response.data)
       } catch (err) {
         console.error("Error fetching gallery:", err)
         setError(err.message || "Failed to load gallery")
@@ -66,6 +66,7 @@ export default function GalleryPage() {
     fetchGallery()
   }, [])
 
+  console.log(galleryItems  , "galleryItems")
   // Pagination logic
   const totalPages = Math.ceil(galleryItems.length / imagesPerPage)
   const startIndex = (currentPage - 1) * imagesPerPage
@@ -143,33 +144,33 @@ export default function GalleryPage() {
             </div>
           )}
 
-          {/* Gallery Grid */}
-          {!loading && !error && (
+       
             <>
-              {currentProperties.length > 0 ? (
+              {galleryItems.length > 0 ? (
                 <>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-                    {currentProperties.map((property) => (
+                    {galleryItems.map((property) => (
+                      console.log(property.images[0]  , "property.images[0]"),
                       <div
-                        key={property.id}
+                        key={property._id || property.id}
                         onClick={() => setSelectedProperty(property)}
                         className="group cursor-pointer overflow-hidden rounded-sm bg-light-gray h-80 relative"
                       >
                         <img
-                          src={property.mainImage || "/placeholder.svg"}
-                          alt={property.title}
+                          src={`${BACKEND_URL}${property.images[0]}`}
+                          alt={property.name || 'Gallery Item'}
                           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                           onError={(e) => { e.target.src = "/placeholder.svg" }}
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-navy/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
                           <h3 className="font-playfair text-xl font-bold text-white mb-1">
-                            {property.title}
+                            {property.name || 'Gallery Item'}
                           </h3>
                           <p className="font-open-sans text-sm text-gold">
-                            {property.category}
+                            {property.description || 'Property'}
                           </p>
                           <p className="font-open-sans text-xs text-white mt-2">
-                            Click to view {property.allImages.length} photos
+                            Click to view {property.images?.length || 0} photos
                           </p>
                         </div>
                       </div>
@@ -227,7 +228,7 @@ export default function GalleryPage() {
                 </div>
               )}
             </>
-          )}
+       
         </div>
       </section>
 
@@ -245,20 +246,20 @@ export default function GalleryPage() {
             {/* Property Info */}
             <div className="text-center mb-8">
               <h2 className="font-playfair text-3xl font-bold text-white mb-2">
-                {selectedProperty.title}
+                {selectedProperty.name || 'Gallery Item'}
               </h2>
               <p className="font-open-sans text-gold text-lg">
-                {selectedProperty.category}
+                {selectedProperty.description || 'Property'}
               </p>
             </div>
 
             {/* Images Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {selectedProperty.allImages.slice(0, 3).map((image, index) => (
+              {(selectedProperty.images || []).map((image, index) => (
                 <div key={index} className="rounded-sm overflow-hidden">
                   <img
-                    src={image || "/placeholder.svg"}
-                    alt={`${selectedProperty.title} - Image ${index + 1}`}
+                    src={`${BACKEND_URL}${image}` || "/placeholder.svg"}
+                    alt={`${selectedProperty.name || 'Gallery Item'} - Image ${index + 1}`}
                     className="w-full h-64 object-cover hover:scale-105 transition-transform duration-300"
                     onError={(e) => { e.target.src = "/placeholder.svg" }}
                   />

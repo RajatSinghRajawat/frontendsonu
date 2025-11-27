@@ -72,19 +72,15 @@ export const galleryService = {
         return "/placeholder.svg";
       }
       // If already full URL, return as is
-      if (pathStr.startsWith('http')) {
+      if (pathStr.startsWith('http://') || pathStr.startsWith('https://')) {
         return pathStr;
       }
-      // If starts with , use BACKEND_URL
-      if (pathStr.startsWith('')) {
-        return `${BACKEND_URL}${pathStr}`;
-      }
-      // If it's just a filename, add 
+      // If starts with /, use BACKEND_URL directly
       if (pathStr.startsWith('/')) {
         return `${BACKEND_URL}${pathStr}`;
       }
-      // Build URL with BACKEND_URL
-      return `${BACKEND_URL}${pathStr}`;
+      // If it's just a filename, add / and BACKEND_URL
+      return `${BACKEND_URL}/${pathStr}`;
     }).filter(Boolean);
   },
 };

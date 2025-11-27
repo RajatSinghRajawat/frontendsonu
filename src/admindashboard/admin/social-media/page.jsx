@@ -4,7 +4,9 @@ import React, { useState, useEffect } from "react"
 import { Edit2, Save, X, Trash2, Upload, User, PlusCircle, Loader2 } from "lucide-react"
 import Layout from "../../Layout"
 import { teamService } from "../../../services/teamService"
+import { socialMediaService } from "../../../services/socialMediaService"
 import { BACKEND_URL } from "../../../config/api"
+import { toast } from "react-hot-toast"
 
 export default function SocialMediaManagement() {
   // State for social media links
@@ -33,9 +35,10 @@ export default function SocialMediaManagement() {
     imageFile: null
   });
 
-  // Fetch team members on component mount
+  // Fetch team members and social links on component mount
   useEffect(() => {
     fetchTeamMembers();
+    fetchSocialLinks();
   }, []);
 
   const fetchTeamMembers = async () => {
@@ -54,15 +57,44 @@ export default function SocialMediaManagement() {
     }
   };
 
+  const fetchSocialLinks = async () => {
+    try {
+      const response = await socialMediaService.getAllLinks();
+      if (response && response.data) {
+        // Convert array of links to object format
+        const linksObject = {};
+        response.data.forEach(link => {
+          linksObject[link.platform.toLowerCase()] = link.url;
+        });
+        setSocialLinks(prev => ({ ...prev, ...linksObject }));
+      }
+    } catch (err) {
+      console.error("Error fetching social links:", err);
+      // Keep default values if fetch fails
+    }
+  };
+
   const handleEdit = () => {
     setTempLinks({ ...socialLinks });
     setIsEditing(true);
   };
 
-  const handleSave = () => {
-    setSocialLinks({ ...tempLinks });
-    setIsEditing(false);
-    console.log("Saving social links:", tempLinks);
+  const handleSave = async () => {
+    try {
+      // Convert object to array format for API
+      const linksArray = Object.entries(tempLinks).map(([platform, url]) => ({
+        platform,
+        url
+      }));
+      
+      await socialMediaService.updateMultipleLinks(linksArray);
+      setSocialLinks({ ...tempLinks });
+      setIsEditing(false);
+      toast.success('Social media links updated successfully');
+    } catch (err) {
+      console.error("Error saving social links:", err);
+      toast.error(err.message || "Failed to save social media links");
+    }
   };
 
   const handleCancel = () => {
@@ -311,7 +343,7 @@ export default function SocialMediaManagement() {
 
         {/* ---- Team Member Form Popup ---- */}
         {showTeamForm && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-3 md:p-4 z-50">
+          <div className="fixed inset-0 bg-black/70 flex items-center justify-center p-3 md:p-4 z-50">
             <div className="bg-white dark:bg-slate-800 rounded-lg md:rounded-xl p-4 md:p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
               <h3 className="text-lg md:text-xl font-semibold mb-4 text-gray-900 dark:text-white">
                 Add Team Member

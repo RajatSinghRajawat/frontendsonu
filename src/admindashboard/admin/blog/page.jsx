@@ -927,7 +927,7 @@ const BlogManagement = () => {
                   blog={blog}
                   onView={handleView}
                   onEdit={handleEditClick}
-                  onDelete={handleDelete}
+                  onDelete={handleDeleteClick}
                 />
               ))}
             </div>

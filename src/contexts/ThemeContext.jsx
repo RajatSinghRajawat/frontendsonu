@@ -10,29 +10,37 @@ export const useTheme = () => {
   return context
 }
 
-export const ThemeProvider = ({ children }) => {
+// Separate theme providers for different parts of the app
+export const ThemeProvider = ({ children, storageKey = 'theme' }) => {
   const [isDarkMode, setIsDarkMode] = useState(false)
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem('theme')
+    const savedTheme = localStorage.getItem(storageKey)
     if (savedTheme) {
       setIsDarkMode(savedTheme === 'dark')
     } else {
       // Default to light mode
       setIsDarkMode(false)
     }
-  }, [])
+  }, [storageKey])
 
   useEffect(() => {
     const root = window.document.documentElement
-    if (isDarkMode) {
-      root.classList.add('dark')
-      localStorage.setItem('theme', 'dark')
+    
+    // Only apply dark mode class for dashboard
+    if (storageKey === 'admin-theme') {
+      if (isDarkMode) {
+        root.classList.add('dark')
+        localStorage.setItem(storageKey, 'dark')
+      } else {
+        root.classList.remove('dark')
+        localStorage.setItem(storageKey, 'light')
+      }
     } else {
-      root.classList.remove('dark')
-      localStorage.setItem('theme', 'light')
+      // For website, store preference but don't apply dark class
+      localStorage.setItem(storageKey, isDarkMode ? 'dark' : 'light')
     }
-  }, [isDarkMode])
+  }, [isDarkMode, storageKey])
 
   const toggleTheme = () => {
     setIsDarkMode(!isDarkMode)
