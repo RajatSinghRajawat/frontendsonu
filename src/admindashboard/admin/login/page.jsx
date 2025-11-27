@@ -79,7 +79,7 @@ export default function LoginPage() {
 
       <div className={`${cardBgClass} border rounded-xl p-8 shadow-2xl max-w-md w-full mx-4`}>
         <div className="text-center mb-8">
-          <div className="w-20 h-20 mx-auto mb-4 overflow-hidden rounded-full shadow-lg">
+          <div className="w-32 h-20 mx-auto mb-4 overflow-hidden rounded-2xl  shadow-lg">
             <img 
               src={bhavishLogo} 
               alt="Bhavish Property Logo"

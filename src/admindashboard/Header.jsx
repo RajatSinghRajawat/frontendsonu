@@ -4,7 +4,7 @@ import { useTheme } from "../contexts/ThemeContext"
 import { Link } from "react-router-dom"
 import { authService } from "../services/authService"
 import { BACKEND_URL } from "../config/api"
-import bhavishLogo from "../images/bhavish.jpg"
+import bhavishLogo from "../images/bhavish.webp"
 
 export const Header = ({ adminName: propAdminName }) => {
   const { isDarkMode, toggleTheme } = useTheme()
@@ -46,7 +46,7 @@ export const Header = ({ adminName: propAdminName }) => {
           <img
             src={bhavishLogo}
             alt="Logo"
-            className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 object-cover flex-shrink-0 rounded-full"
+            className="w-10 h-10 sm:w-8 sm:h-8 md:w-20 md:h-12 object-cover "
           />
         </div>
 

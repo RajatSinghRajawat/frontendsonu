@@ -1,12 +1,12 @@
 import { Link } from "react-router-dom"
 import { Mail, Phone, MapPin, MessageCircle } from "lucide-react"
-import logo from "../images/Nexproud1.png"
+import logo from "../images/mainlogofile.png"
 import bhavish from "../images/fulllogo.jpg"
 
 export default function Footer() {
   return (
     <footer className="bg-navy text-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-6">
           {/* Brand (Logo and Text in a Card) */}
           <div className="bg-white rounded-lg shadow-lg p-4 flex flex-col items-center text-center"> {/* Card styles */}
@@ -93,19 +93,28 @@ export default function Footer() {
         </div>
 
         {/* Footer Bottom (Reduced Spacing) */}
-        <div className="border-t border-white/20 pt-4 mt-4">
-          <p className="font-open-sans text-sm text-white/60 text-center flex items-center justify-center gap-2">
-             © {new Date().getFullYear()} Bhavishproperties. All rights reserved. Design and Developed by{" "}
-            <a
-              href="https://www.nexproudtech.live"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center"
-            >
-              <img src={logo} alt="Logo" className="h-6 rounded-2xl w-auto hover:opacity-90 transition-opacity" />
-            </a>
-          </p>
-        </div>
+         <div className="border-t border-white/20 pt-8 mt-4">
+          <div className="flex flex-col md:flex-row items-center justify-center gap-4 text-center">
+            <p className="font-open-sans text-sm text-gray-400">
+              © {new Date().getFullYear()} BhavishProperties. All rights reserved.
+            </p>
+            
+            <div className="hidden md:block w-1 h-1 rounded-full bg-gray-500"></div> {/* Dot separator for desktop */}
+            
+            <p className="font-open-sans text-sm text-gray-400 flex flex-col sm:flex-row items-center gap-2">
+              <span>Design and Developed by</span>
+              <a
+                href="https://www.nexproudtech.live"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center bg-white/10 px-3 py-1 rounded-full hover:bg-white/20 transition-all"
+              >
+                <img src={logo} alt="Nexproud Tech Logo" className="h-5 w-auto mr-2 rounded-sm" />
+                <span className="font-semibold text-white">NexproudTech</span>
+              </a>
+            </p>
+          </div>
+        </div>
       </div>
     </footer>
   )

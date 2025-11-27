@@ -1,6 +1,6 @@
 "use client"
 import { Link } from "react-router-dom"
-import bgImage from "../../images/home3.png"
+import bgImage from "../../images/home3.webp"
 
 export default function HeroSection() {
   return (
@@ -72,6 +72,8 @@ export default function HeroSection() {
 
         </div>
       </div>
+      {/* <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-b from-transparent to-[#fffdfa]"></div> */}
+
     </section>
   )
 }

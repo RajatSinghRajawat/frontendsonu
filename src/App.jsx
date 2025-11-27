@@ -24,6 +24,7 @@ import AdminProfile from './admindashboard/admin/profile/page'
 // import AdminChangePassword from './admindashboard/admin/change-password/page'
 import AdminSocialMedia from './admindashboard/admin/social-media/page'
 import AdminBlog from './admindashboard/admin/blog/page'
+import NotFound from './not-found/page'
 
 function App() {
   return (
@@ -56,6 +57,9 @@ function App() {
         <Route path="/admin/social-media" element={<AdminSocialMedia />} />
         <Route path="/admin/profile" element={<AdminProfile />} />
         {/* <Route path="/admin/change-password" element={<AdminChangePassword />} /> */}
+
+        {/* 404 Route */}
+        <Route path="*" element={<Layout><NotFound /></Layout>} />
       </Routes>
     </Router>
   )

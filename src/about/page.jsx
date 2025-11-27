@@ -279,54 +279,54 @@ export default function AboutPage() {
      
 
         {/* Team Section - Enhanced */}
-        <div>
-          <h2 className="font-playfair text-4xl font-bold text-navy text-center mb-4">Our Leadership Team</h2>
-          <p className="font-open-sans text-gray-600 text-center mb-12 max-w-2xl mx-auto">
-            Meet the visionaries behind Bhavish Property's success story
-          </p>
-          
-          {loadingTeam ? (
-            <div className="flex items-center justify-center py-20">
-              <Loader2 className="w-12 h-12 animate-spin text-navy" />
+      <div>
+  <h2 className="font-playfair text-4xl font-bold text-navy text-center mb-4">Our Leadership Team</h2>
+  <p className="font-open-sans text-gray-600 text-center mb-12 max-w-2xl mx-auto">
+    Meet the visionaries behind Bhavish Property's success story
+  </p>
+  
+  {loadingTeam ? (
+    <div className="flex items-center justify-center py-20">
+      <Loader2 className="w-12 h-12 animate-spin text-navy" />
+    </div>
+  ) : teamMembers.length > 0 ? (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
+      {teamMembers.map((member, index) => {
+        const imageUrl = member.image ? `${BACKEND_URL}${member.image}` : "/placeholder-user.jpg"
+        console.log(`Member ${member.name} - Image URL:`, imageUrl)
+        
+        return (
+          <div key={member._id || index} className="group text-center bg-white rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 overflow-hidden w-full max-w-sm">
+            <div className="relative h-64 sm:h-72 overflow-hidden bg-gray-200">
+              <img
+                src={imageUrl}
+                alt={member.name}
+                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                onError={(e) => { 
+                  console.log(`Image failed to load for ${member.name}:`, imageUrl)
+                  e.target.src = "/placeholder-user.jpg" 
+                }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-navy/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="absolute bottom-4 left-4 right-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <p className="font-open-sans text-sm">{member.designation}</p>
+              </div>
             </div>
-          ) : teamMembers.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {teamMembers.map((member, index) => {
-                const imageUrl = member.image ? `${BACKEND_URL}${member.image}` : "/placeholder-user.jpg"
-                console.log(`Member ${member.name} - Image URL:`, imageUrl)
-                
-                return (
-                  <div key={member._id || index} className="group text-center bg-white rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 overflow-hidden">
-                    <div className="relative h-80 overflow-hidden bg-gray-200">
-                      <img
-                        src={imageUrl}
-                        alt={member.name}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                        onError={(e) => { 
-                          console.log(`Image failed to load for ${member.name}:`, imageUrl)
-                          e.target.src = "/placeholder-user.jpg" 
-                        }}
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-navy/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                      <div className="absolute bottom-4 left-4 right-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <p className="font-open-sans text-sm">{member.designation}</p>
-                      </div>
-                    </div>
-                    <div className="p-6">
-                      <h3 className="font-playfair text-xl font-bold text-navy mb-2">{member.name}</h3>
-                      <p className="font-open-sans text-gray-700">{member.designation}</p>
-                    </div>
-                  </div>
-                )
-              })}
+            <div className="p-4 sm:p-6">
+              <h3 className="font-playfair text-lg sm:text-xl font-bold text-navy mb-2">{member.name}</h3>
+              <p className="font-open-sans text-gray-700 text-sm sm:text-base">{member.designation}</p>
             </div>
-          ) : (
-            <div className="text-center py-20">
-              <Users className="w-16 h-16 mx-auto mb-4 text-gray-400" />
-              <p className="font-open-sans text-gray-600">No team members available at the moment.</p>
-            </div>
-          )}
-        </div>
+          </div>
+        )
+      })}
+    </div>
+  ) : (
+    <div className="text-center py-20">
+      <Users className="w-16 h-16 mx-auto mb-4 text-gray-400" />
+      <p className="font-open-sans text-gray-600">No team members available at the moment.</p>
+    </div>
+  )}
+</div>
       </div>
     </main>
   )
