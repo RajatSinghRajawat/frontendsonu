@@ -2,6 +2,8 @@
 
 import { X } from "lucide-react"
 import { useState } from "react"
+import { feedbacksService } from "@/services/feedbacksService"
+import toast from "react-hot-toast"
 
 export default function FeedbackModal({ isOpen, onClose }) {
   const [formData, setFormData] = useState({
@@ -12,6 +14,7 @@ export default function FeedbackModal({ isOpen, onClose }) {
   })
 
   const [submitted, setSubmitted] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   const handleChange = (e) => {
     setFormData({
@@ -20,14 +23,40 @@ export default function FeedbackModal({ isOpen, onClose }) {
     })
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    setSubmitted(true)
-    setTimeout(() => {
-      setFormData({ name: "", email: "", rating: "5", feedback: "" })
-      setSubmitted(false)
-      onClose()
-    }, 2000)
+    
+    try {
+      setLoading(true)
+      
+      // Prepare data for API
+      const feedbackData = {
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        rating: Number(formData.rating),
+        message: formData.feedback.trim()
+      }
+
+      // Call API
+      const response = await feedbacksService.createFeedback(feedbackData)
+      
+      if (response.success) {
+        toast.success("Thank you for your feedback!")
+        setSubmitted(true)
+        
+        // Reset form and close modal after 2 seconds
+        setTimeout(() => {
+          setFormData({ name: "", email: "", rating: "5", feedback: "" })
+          setSubmitted(false)
+          onClose()
+        }, 2000)
+      }
+    } catch (error) {
+      console.error("Error submitting feedback:", error)
+      toast.error(error.message || "Failed to submit feedback. Please try again.")
+    } finally {
+      setLoading(false)
+    }
   }
 
   if (!isOpen) return null
@@ -107,9 +136,10 @@ export default function FeedbackModal({ isOpen, onClose }) {
 
               <button
                 type="submit"
-                className="w-full bg-navy text-white py-3 rounded-sm font-open-sans font-semibold hover:bg-navy/90 transition-all"
+                disabled={loading}
+                className="w-full bg-navy text-white py-3 rounded-sm font-open-sans font-semibold hover:bg-navy/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Submit Feedback
+                {loading ? "Submitting..." : "Submit Feedback"}
               </button>
             </form>
           )}
