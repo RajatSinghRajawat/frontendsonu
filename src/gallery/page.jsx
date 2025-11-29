@@ -14,7 +14,7 @@ export default function GalleryPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const imagesPerPage = 9
-const BACKEND_URL = "https://backendsonu-1.onrender.com/"
+const BACKEND_URL = "https://bhavishproperties.com"
   // Fetch gallery items from API
   useEffect(() => {
     const fetchGallery = async () => {

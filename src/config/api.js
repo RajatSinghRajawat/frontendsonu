@@ -2,7 +2,7 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 
 // Backend URL from environment variable
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'https://backendsonu-1.onrender.com';
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'https://bhavishproperties.com';
 // API Base URL - append /api to backend URL
 const API_BASE_URL = `${BACKEND_URL}/api`;
 

@@ -67,7 +67,7 @@ getImageUrl: (imagePath) => {
 
 ### **Backend URL:**
 ```javascript
-BACKEND_URL = 'https://backendsonu-1.onrender.com'
+BACKEND_URL = 'https://bhavishproperties.com'
 ```
 
 ### **Image URL Construction Examples:**
@@ -75,16 +75,16 @@ BACKEND_URL = 'https://backendsonu-1.onrender.com'
 **Input Path Examples:**
 ```javascript
 // Case 1: Full URL
-'https://backendsonu-1.onrender.com/uploads/blog/image.jpg'
+'https://bhavishproperties.comuploads/blog/image.jpg'
 // Output: Same URL (no change)
 
 // Case 2: Path with /
 '/uploads/blog/image.jpg'
-// Output: 'https://backendsonu-1.onrender.com/uploads/blog/image.jpg'
+// Output: 'https://bhavishproperties.comuploads/blog/image.jpg'
 
 // Case 3: Just filename
 'uploads/blog/image.jpg'
-// Output: 'https://backendsonu-1.onrender.com/uploads/blog/image.jpg'
+// Output: 'https://bhavishproperties.comuploads/blog/image.jpg'
 ```
 
 ### **Testing Checklist:**
