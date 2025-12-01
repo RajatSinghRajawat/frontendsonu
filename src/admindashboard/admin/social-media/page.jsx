@@ -1,26 +1,13 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
-import { Edit2, Save, X, Trash2, Upload, User, PlusCircle, Loader2 } from "lucide-react"
+import { Save, X, Trash2, Upload, User, PlusCircle, Loader2 } from "lucide-react"
 import Layout from "../../Layout"
 import { teamService } from "../../../services/teamService"
-import { socialMediaService } from "../../../services/socialMediaService"
 import { BACKEND_URL } from "../../../config/api"
 import { toast } from "react-hot-toast"
 
-export default function SocialMediaManagement() {
-  // State for social media links
-  const [socialLinks, setSocialLinks] = useState({
-    facebook: "https://facebook.com/luxuryestates",
-    instagram: "https://instagram.com/luxuryestates",
-    twitter: "https://twitter.com/luxuryestates",
-    linkedin: "https://linkedin.com/company/luxuryestates",
-    youtube: "",
-    pinterest: ""
-  });
-
-  const [isEditing, setIsEditing] = useState(false);
-  const [tempLinks, setTempLinks] = useState({ ...socialLinks });
+export default function TeamManagement() {
   const [showTeamForm, setShowTeamForm] = useState(false);
   const [teamMembers, setTeamMembers] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -35,10 +22,9 @@ export default function SocialMediaManagement() {
     imageFile: null
   });
 
-  // Fetch team members and social links on component mount
+  // Fetch team members on component mount
   useEffect(() => {
     fetchTeamMembers();
-    fetchSocialLinks();
   }, []);
 
   const fetchTeamMembers = async () => {
@@ -55,58 +41,6 @@ export default function SocialMediaManagement() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const fetchSocialLinks = async () => {
-    try {
-      const response = await socialMediaService.getAllLinks();
-      if (response && response.data) {
-        // Convert array of links to object format
-        const linksObject = {};
-        response.data.forEach(link => {
-          linksObject[link.platform.toLowerCase()] = link.url;
-        });
-        setSocialLinks(prev => ({ ...prev, ...linksObject }));
-      }
-    } catch (err) {
-      console.error("Error fetching social links:", err);
-      // Keep default values if fetch fails
-    }
-  };
-
-  const handleEdit = () => {
-    setTempLinks({ ...socialLinks });
-    setIsEditing(true);
-  };
-
-  const handleSave = async () => {
-    try {
-      // Convert object to array format for API
-      const linksArray = Object.entries(tempLinks).map(([platform, url]) => ({
-        platform,
-        url
-      }));
-      
-      await socialMediaService.updateMultipleLinks(linksArray);
-      setSocialLinks({ ...tempLinks });
-      setIsEditing(false);
-      toast.success('Social media links updated successfully');
-    } catch (err) {
-      console.error("Error saving social links:", err);
-      toast.error(err.message || "Failed to save social media links");
-    }
-  };
-
-  const handleCancel = () => {
-    setTempLinks({ ...socialLinks });
-    setIsEditing(false);
-  };
-
-  const handleLinkChange = (platform, value) => {
-    setTempLinks(prev => ({
-      ...prev,
-      [platform]: value
-    }));
   };
 
   const handleAddTeamMember = async () => {
@@ -201,69 +135,8 @@ export default function SocialMediaManagement() {
     <Layout>
       <div className="min-h-screen bg-gray-50 dark:bg-slate-800">
         <div className="space-y-4 md:space-y-6 p-3 md:p-6 lg:p-8">
-          {/* ---- Main Content Grid ---- */}
-          <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 md:gap-6">
-            {/* ---- Social Links Section ---- */}
-            <div className="xl:col-span-2">
-              <div className="bg-white dark:bg-slate-900 shadow-sm rounded-lg md:rounded-xl p-4 md:p-6 border border-gray-200 dark:border-slate-700">
-                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-4 md:mb-6">
-                  <h2 className="text-lg md:text-xl lg:text-2xl font-semibold text-gray-900 dark:text-white">
-                    Social Media Links
-                  </h2>
-                  {!isEditing ? (
-                    <button
-                      onClick={handleEdit}
-                      className="flex items-center justify-center gap-2 px-3 py-2 md:px-4 md:py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors w-full sm:w-auto text-sm md:text-base"
-                    >
-                      <Edit2 size={16} className="flex-shrink-0" />
-                      <span>Edit Links</span>
-                    </button>
-                  ) : (
-                    <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-                      <button
-                        onClick={handleSave}
-                        className="flex items-center justify-center gap-2 px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex-1 sm:flex-none text-sm md:text-base"
-                      >
-                        <Save size={16} className="flex-shrink-0" />
-                        <span>Save</span>
-                      </button>
-                      <button
-                        onClick={handleCancel}
-                        className="flex items-center justify-center gap-2 px-3 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors flex-1 sm:flex-none text-sm md:text-base"
-                      >
-                        <X size={16} className="flex-shrink-0" />
-                        <span>Cancel</span>
-                      </button>
-                    </div>
-                  )}
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
-                  {Object.entries(socialLinks).map(([platform, link]) => (
-                    <div key={platform} className="space-y-1 md:space-y-2">
-                      <label className="block text-xs md:text-sm font-medium text-gray-700 dark:text-gray-300 capitalize">
-                        {platform} Link
-                      </label>
-                      {isEditing ? (
-                        <input
-                          type="url"
-                          value={tempLinks[platform]}
-                          onChange={(e) => handleLinkChange(platform, e.target.value)}
-                          placeholder={`Enter ${platform} URL`}
-                          className="w-full px-3 py-2 text-sm md:text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                        />
-                      ) : (
-                        <div className="w-full px-3 py-2 text-sm md:text-base border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 break-all">
-                          {link || "Not set"}
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* ---- Team Management Section ---- */}
+          {/* ---- Team Management Section ---- */}
+          <div className="max-w-4xl mx-auto">
             <div className="bg-white dark:bg-slate-900 shadow-sm rounded-lg md:rounded-xl p-4 md:p-6 border border-gray-200 dark:border-slate-700">
               <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-4 md:mb-6">
                 <h2 className="text-lg md:text-xl lg:text-2xl font-semibold text-gray-900 dark:text-white">
