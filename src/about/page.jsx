@@ -11,6 +11,9 @@ export default function AboutPage() {
   const [expandedFaq, setExpandedFaq] = useState(null)
   const [teamMembers, setTeamMembers] = useState([])
   const [loadingTeam, setLoadingTeam] = useState(false)
+
+  console.log( BACKEND_URL," BACKEND_URL");
+  
   
   // Fetch team members on component mount
   useEffect(() => {
@@ -292,7 +295,11 @@ export default function AboutPage() {
   ) : teamMembers.length > 0 ? (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
       {teamMembers.map((member, index) => {
-        const imageUrl = member.image ? `${BACKEND_URL}${member.image}` : "/placeholder-user.jpg"
+        // Backend saves only the filename (e.g. "abc.jpg") and serves it from the static root,
+        // so we need a slash between BACKEND_URL and the filename.
+        const imageUrl = member.image
+          ? `${BACKEND_URL.replace(/\/+$/, "")}/${String(member.image).replace(/^\/+/, "")}`
+          : "/placeholder-user.jpg"
         console.log(`Member ${member.name} - Image URL:`, imageUrl)
         
         return (

@@ -10,17 +10,15 @@ export default function FeedbackModal({ isOpen, onClose }) {
     name: "",
     email: "",
     rating: "5",
-    feedback: "",
+    message: "",
   })
 
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    })
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }))
   }
 
   const handleSubmit = async (e) => {
@@ -29,15 +27,15 @@ export default function FeedbackModal({ isOpen, onClose }) {
     try {
       setLoading(true)
       
-      // Prepare data for API
+      // Prepare data for API - same structure as admin form
       const feedbackData = {
         name: formData.name.trim(),
         email: formData.email.trim(),
         rating: Number(formData.rating),
-        message: formData.feedback.trim()
+        message: formData.message.trim()
       }
 
-      // Call API
+      // Call API - same as admin
       const response = await feedbacksService.createFeedback(feedbackData)
       
       if (response.success) {
@@ -46,14 +44,15 @@ export default function FeedbackModal({ isOpen, onClose }) {
         
         // Reset form and close modal after 2 seconds
         setTimeout(() => {
-          setFormData({ name: "", email: "", rating: "5", feedback: "" })
+          setFormData({ name: "", email: "", rating: "5", message: "" })
           setSubmitted(false)
           onClose()
         }, 2000)
       }
     } catch (error) {
       console.error("Error submitting feedback:", error)
-      toast.error(error.message || "Failed to submit feedback. Please try again.")
+      const errorMessage = error?.message || error?.error || error?.response?.data?.message || "Failed to submit feedback. Please try again."
+      toast.error(errorMessage)
     } finally {
       setLoading(false)
     }
@@ -122,15 +121,15 @@ export default function FeedbackModal({ isOpen, onClose }) {
               </div>
 
               <div>
-                <label className="block font-open-sans text-sm font-semibold text-navy mb-2">Your Feedback</label>
+                <label className="block font-open-sans text-sm font-semibold text-navy mb-2">Message *</label>
                 <textarea
-                  name="feedback"
-                  value={formData.feedback}
+                  name="message"
+                  value={formData.message}
                   onChange={handleChange}
                   required
                   rows="4"
                   className="w-full px-4 py-2 border border-border rounded-sm font-open-sans focus:outline-none focus:border-gold resize-none"
-                  placeholder="Share your feedback..."
+                  placeholder="Enter feedback message..."
                 />
               </div>
 

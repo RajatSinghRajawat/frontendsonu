@@ -1,59 +1,38 @@
 "use client"
 
 import { Star } from "lucide-react"
-import { useState, useEffect, useMemo } from "react"
+import { useState, useEffect } from "react"
 import FeedbackModal from "@/components/feedback-modal"
-import { testimonialsService } from "@/services/testimonialsService"
-import { BACKEND_URL } from "@/config/api"
+import { feedbacksService } from "@/services/feedbacksService"
 import toast from "react-hot-toast"
 import pic6 from "../images/pagepic/pic6.webp"
 
 export default function TestimonialsPage() {
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false)
-  const [testimonials, setTestimonials] = useState([])
+  const [feedbacks, setFeedbacks] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
-  // Fetch testimonials from API
+  // Fetch feedbacks from API
   useEffect(() => {
-    const fetchTestimonials = async () => {
+    const fetchFeedbacks = async () => {
       try {
         setLoading(true)
         setError(null)
-        const response = await testimonialsService.getAllTestimonials()
-        console.log(response.data  , "response.data")
+       const response = await feedbacksService.getAllFeedbacksAdmin();
+        console.log(response.data, "response.data")
         
-        // // Transform API data
-        // const transformedTestimonials = (response.data || []).map((test) => {
-        //   let imageUrl = "/placeholder.svg"
-        //   if (test.image) {
-        //     if (typeof test.image === 'string') {
-        //       imageUrl = testimonialsService.getImageUrl(test.image)
-        //     } else if (Array.isArray(test.image) && test.image.length > 0) {
-        //       imageUrl = testimonialsService.getImageUrl(test.image[0])
-        //     }
-        //   }
-          
-        //   return {
-        //     name: test.name || "Anonymous",
-        //     title: test.title || "Client",
-        //     text: test.text || "",
-        //     rating: test.rating || 5,
-        //     avatar: imageUrl,
-        //   }
-        // })
-        
-        setTestimonials(response.data)
+        setFeedbacks(response.data || [])
       } catch (err) {
-        console.error("Error fetching testimonials:", err)
-        setError(err.message || "Failed to load testimonials")
-        toast.error(err.message || "Failed to load testimonials")
+        console.error("Error fetching feedbacks:", err)
+        setError(err.message || "Failed to load feedbacks")
+        toast.error(err.message || "Failed to load feedbacks")
       } finally {
         setLoading(false)
       }
     }
     
-    fetchTestimonials()
+    fetchFeedbacks()
   }, [])
 
   return (
@@ -101,7 +80,7 @@ export default function TestimonialsPage() {
           {loading && (
             <div className="text-center py-12">
               <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-gold"></div>
-              <p className="mt-4 text-gray-600">Loading testimonials...</p>
+              <p className="mt-4 text-gray-600">Loading feedbacks...</p>
             </div>
           )}
 
@@ -118,42 +97,33 @@ export default function TestimonialsPage() {
             </div>
           )}
 
-          {/* Testimonials Grid */}
+          {/* Feedbacks Grid */}
           {!loading && !error && (
             <>
-              {testimonials.length > 0 ? (
+              {feedbacks.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {testimonials.map((testimonial, index) => (
-                    <div key={index} className="bg-light-gray p-8 rounded-sm hover:shadow-lg transition-shadow">
+                  {feedbacks.map((feedback, index) => (
+                    <div key={feedback._id || feedback.id || index} className="bg-light-gray p-8 rounded-sm hover:shadow-lg transition-shadow">
                       {/* Stars */}
                       <div className="flex gap-1 mb-4">
-                        {[...Array(testimonial.rating)].map((_, i) => (
+                        {[...Array(feedback.rating || 5)].map((_, i) => (
                           <Star key={i} size={18} className="fill-gold text-gold" />
                         ))}
                       </div>
 
-                      {/* Text */}
-                      <p className="font-open-sans text-gray-700 leading-relaxed mb-6 min-h-24">"{testimonial.text}"</p>
+                      {/* Message */}
+                      <p className="font-open-sans text-gray-700 leading-relaxed mb-6 min-h-24">"{feedback.message || ""}"</p>
 
                       {/* Author */}
                       <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-full overflow-hidden bg-navy flex-shrink-0">
-                          <img
-                            src={testimonial.image ? (testimonial.image.startsWith('http') ? testimonial.image : testimonial.image.startsWith('/') ? `${BACKEND_URL}${testimonial.image}` : `${BACKEND_URL}/${testimonial.image}`) : "/placeholder.svg"}
-                            alt={testimonial.name}
-                            className="w-full h-full object-cover"
-                            width={48}
-                            height={48}
-                            onError={(e) => { 
-                              if (e.target.src !== "/placeholder.svg") {
-                                e.target.src = "/placeholder.svg"
-                              }
-                            }}
-                          />
+                        <div className="w-12 h-12 rounded-full overflow-hidden bg-navy flex-shrink-0 flex items-center justify-center">
+                          <span className="text-white font-playfair font-bold text-lg">
+                            {(feedback.name || "A")[0].toUpperCase()}
+                          </span>
                         </div>
                         <div>
-                          <p className="font-playfair font-bold text-navy">{testimonial.name}</p>
-                          <p className="font-open-sans text-sm text-gray-700">{testimonial.title}</p>
+                          <p className="font-playfair font-bold text-navy">{feedback.name || "Anonymous"}</p>
+                          <p className="font-open-sans text-sm text-gray-700">{feedback.email || ""}</p>
                         </div>
                       </div>
                     </div>
@@ -161,7 +131,7 @@ export default function TestimonialsPage() {
                 </div>
               ) : (
                 <div className="text-center py-12">
-                  <p className="text-gray-600">No testimonials available yet.</p>
+                  <p className="text-gray-600">No feedbacks available yet.</p>
                 </div>
               )}
             </>
