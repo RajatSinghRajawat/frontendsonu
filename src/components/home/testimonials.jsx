@@ -3,28 +3,29 @@
 import { useState, useEffect } from "react"
 import { ChevronLeft, ChevronRight, Star, Quote } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
-import { testimonialsService } from "@/services/testimonialsService"
+import { feedbacksService } from "@/services/feedbacksService"
 
 export default function Testimonials() {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [testimonials, setTestimonials] = useState([])
   const [loading, setLoading] = useState(true)
 
-  // Fetch testimonials from API
+  // Fetch feedbacks from API
   useEffect(() => {
-    const fetchTestimonials = async () => {
+    const fetchFeedbacks = async () => {
       try {
         setLoading(true)
-        const response = await testimonialsService.getAllTestimonials()
+        const response = await feedbacksService.getAllFeedbacks()
         
-        // Transform and limit to 3 for carousel
+        // Transform feedbacks data to match component structure
+        // Only show approved feedbacks (API already filters approved ones)
         const transformed = (response.data || [])
           .slice(0, 3)
-          .map((test) => ({
-            name: test.name || "Anonymous",
-            title: test.title || "Client",
-            text: test.text || "",
-            rating: test.rating || 5,
+          .map((feedback) => ({
+            name: feedback.name || "Anonymous",
+            title: feedback.email ? feedback.email.split('@')[0] : "Client", // Use email username as title
+            text: feedback.message || "",
+            rating: feedback.rating || 5,
           }))
         
         // If less than 3, use defaults
@@ -39,7 +40,7 @@ export default function Testimonials() {
         
         setTestimonials(transformed)
       } catch (err) {
-        console.error("Error fetching testimonials:", err)
+        console.error("Error fetching feedbacks:", err)
         // Use default testimonials on error
         setTestimonials([
           {
@@ -66,7 +67,7 @@ export default function Testimonials() {
       }
     }
     
-    fetchTestimonials()
+    fetchFeedbacks()
   }, [])
 
   const next = () => {
@@ -107,7 +108,7 @@ export default function Testimonials() {
         {/* Header */}
         <div className="text-center mb-12">
           <h2 className="font-playfair text-3xl md:text-4xl font-bold text-navy mb-3">
-            Client Testimonials
+            Client Testimonials 
           </h2>
           <div className="w-16 h-1 bg-gold mx-auto" />
         </div>

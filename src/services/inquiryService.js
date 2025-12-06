@@ -6,6 +6,11 @@ export const inquiryService = {
     return await api.post('/inquiry/createInquiry', inquiryData);
   },
 
+  // Get inquiry count
+  getInquiryCount: async () => {
+    return await api.get('/inquiry/count');
+  },
+
   // Get all inquiries (public)
   getAllInquiries: async () => {
     return await api.get('/inquiry');

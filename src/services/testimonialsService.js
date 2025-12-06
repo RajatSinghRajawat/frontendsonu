@@ -2,6 +2,11 @@ import api from '../config/api';
 import { BACKEND_URL } from '../config/api';
 
 export const testimonialsService = {
+  // Get testimonial count
+  getTestimonialCount: async () => {
+    return await api.get('/testimonials/count');
+  },
+
   // Get all testimonials
   getAllTestimonials: async () => {
     return await api.get('/testimonials');

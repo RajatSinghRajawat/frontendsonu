@@ -6,6 +6,11 @@ export const contactService = {
     return await api.post('/contact', contactData);
   },
 
+  // Get contact count
+  getContactCount: async () => {
+    return await api.get('/contact/count');
+  },
+
   // Get all contacts (public)
   getAllContacts: async () => {
     return await api.get('/contact');

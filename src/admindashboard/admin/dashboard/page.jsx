@@ -7,7 +7,7 @@ import Layout from "../../Layout"
 import { inquiryService } from "../../../services/inquiryService"
 import { contactService } from "../../../services/contactService"
 import { propertiesService } from "../../../services/propertiesService"
-import { testimonialsService } from "../../../services/testimonialsService"
+import { feedbacksService } from "../../../services/feedbacksService"
 import { toast, Toaster } from "react-hot-toast"
 
 export default function DashboardOverview() {
@@ -17,7 +17,7 @@ export default function DashboardOverview() {
     totalInquiries: 0,
     totalContacts: 0,
     totalProperties: 0,
-    totalTestimonials: 0
+    totalFeedbacks: 0
   })
   const [recentInquiries, setRecentInquiries] = useState([])
   const [recentContacts, setRecentContacts] = useState([])
@@ -30,25 +30,63 @@ export default function DashboardOverview() {
     try {
       setLoading(true)
       
-      // Fetch all data in parallel
-      const [inquiriesRes, contactsRes, propertiesRes, testimonialsRes] = await Promise.all([
+      // Fetch counts and recent data in parallel
+      const [countsRes, inquiriesRes, contactsRes] = await Promise.all([
+        Promise.all([
+          inquiryService.getInquiryCount().catch((err) => {
+            console.error('Error fetching inquiry count:', err);
+            return { success: false, count: 0 };
+          }),
+          contactService.getContactCount().catch((err) => {
+            console.error('Error fetching contact count:', err);
+            return { success: false, count: 0 };
+          }),
+          propertiesService.getPropertyCount().catch((err) => {
+            console.error('Error fetching property count:', err);
+            return { success: false, count: 0 };
+          }),
+          feedbacksService.getFeedbackCount().catch((err) => {
+            console.error('Error fetching feedback count:', err);
+            return { success: false, count: 0 };
+          })
+        ]),
         inquiryService.getAllInquiries().catch(() => ({ data: [] })),
-        contactService.getAllContacts().catch(() => ({ data: [] })),
-        propertiesService.getAllProperties().catch(() => ({ data: [] })),
-        testimonialsService.getAllTestimonials().catch(() => ({ data: [] }))
+        contactService.getAllContacts().catch(() => ({ data: [] }))
       ])
+
+      const [inquiryCountRes, contactCountRes, propertyCountRes, feedbackCountRes] = countsRes
+
+      // Extract counts from responses
+      // API interceptor returns response.data, so backend { success: true, count: X } becomes { success: true, count: X }
+      // So we access count directly from the response object
+      const inquiryCount = inquiryCountRes?.count ?? 0
+      const contactCount = contactCountRes?.count ?? 0
+      const propertyCount = propertyCountRes?.count ?? 0
+      const feedbackCount = feedbackCountRes?.count ?? 0
+
+      // Debug logging
+      console.log('Count responses:', {
+        inquiryCountRes,
+        contactCountRes,
+        propertyCountRes,
+        feedbackCountRes,
+        extracted: {
+          inquiryCount,
+          contactCount,
+          propertyCount,
+          feedbackCount
+        }
+      })
+
+      setStats({
+        totalInquiries: inquiryCount,
+        totalContacts: contactCount,
+        totalProperties: propertyCount,
+        totalFeedbacks: feedbackCount
+      })
 
       const inquiries = inquiriesRes?.data || []
       const contacts = contactsRes?.data || []
-      const properties = propertiesRes?.data || []
-      const testimonials = testimonialsRes?.data || []
-
-      setStats({
-        totalInquiries: inquiries.length,
-        totalContacts: contacts.length,
-        totalProperties: properties.length,
-        totalTestimonials: testimonials.length
-      })
 
       // Get recent 3 inquiries
       const sortedInquiries = inquiries
@@ -124,7 +162,7 @@ export default function DashboardOverview() {
           <StatCard title="Total Inquiries" value={loading ? "..." : stats.totalInquiries.toString()} icon={<MessageSquare size={24} />} />
           <StatCard title="Total Contacts" value={loading ? "..." : stats.totalContacts.toString()} icon={<Users size={24} />} />
           <StatCard title="Total Properties" value={loading ? "..." : stats.totalProperties.toString()} icon={<Home size={24} />} />
-          <StatCard title="Total Testimonials" value={loading ? "..." : stats.totalTestimonials.toString()} icon={<Images size={24} />} />
+          <StatCard title="Total Feedbacks" value={loading ? "..." : stats.totalFeedbacks.toString()} icon={<Images size={24} />} />
         </div>
 
         {/* ---- Middle Section ---- */}

@@ -116,7 +116,8 @@ export default function BlogPostPage() {
         const transformedPost = {
           id: blog._id || blog.id || id,
           title: blog.name || blog.title || "Untitled",
-          excerpt: blog.description || blog.excerpt || "",
+          description: blog.description || "",
+          excerpt: blog.excerpt || "",
           content: blog.content || "",
           image: imageUrl,
           author: blog.author || "Admin",
@@ -127,6 +128,9 @@ export default function BlogPostPage() {
           }) : new Date().toLocaleDateString(),
           category: blog.category || "General",
           fullContent: blog.content || "",
+          subHeadings: blog.subHeadings || [],
+          quotes: blog.quotes || [],
+          highlightPoints: blog.highlightPoints || [],
         }
 
         setPost(transformedPost)
@@ -313,8 +317,29 @@ export default function BlogPostPage() {
             </span>
           </div>
 
+          {/* Description */}
+          {post?.description && (
+            <div className="mb-8">
+              <h2 className="font-playfair text-2xl font-bold text-navy mb-4">Description</h2>
+              <p className="font-open-sans text-gray-700 leading-relaxed text-lg">
+                {post.description}
+              </p>
+            </div>
+          )}
+
+          {/* Excerpt */}
+          {post?.excerpt && (
+            <div className="mb-8">
+              <h2 className="font-playfair text-2xl font-bold text-navy mb-4">Excerpt</h2>
+              <p className="font-open-sans text-gray-700 leading-relaxed text-lg italic">
+                {post.excerpt}
+              </p>
+            </div>
+          )}
+
           {/* Full Content */}
           <div className="prose prose-lg max-w-none mb-12">
+            {/* Main Content */}
             {contentSections.length > 0 ? (
               contentSections.map((section, index) => {
                 if (!section) return null
@@ -332,8 +357,59 @@ export default function BlogPostPage() {
                 )
               })
             ) : (
-              <div className="font-open-sans text-gray-700 leading-relaxed text-lg whitespace-pre-wrap">
+              <div className="font-open-sans text-gray-700 leading-relaxed text-lg whitespace-pre-wrap mb-8">
                 {post?.fullContent || post?.content || "No content available."}
+              </div>
+            )}
+
+            {/* Sub Headings */}
+            {post?.subHeadings && Array.isArray(post.subHeadings) && post.subHeadings.length > 0 && (
+              <div className="mt-12 mb-8">
+                <h2 className="font-playfair text-3xl font-bold text-navy mb-6">Key Sections</h2>
+                {post.subHeadings.map((subHeading, index) => (
+                  <div key={index} className="mb-8">
+                    {subHeading.title && (
+                      <h3 className="font-playfair text-2xl font-bold text-navy mb-3">
+                        {subHeading.title}
+                      </h3>
+                    )}
+                    {subHeading.content && (
+                      <p className="font-open-sans text-gray-700 leading-relaxed text-lg">
+                        {subHeading.content}
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Highlight Points */}
+            {post?.highlightPoints && Array.isArray(post.highlightPoints) && post.highlightPoints.length > 0 && (
+              <div className="mt-12 mb-8 bg-gold/10 p-6 rounded-lg border-l-4 border-gold">
+                <h2 className="font-playfair text-2xl font-bold text-navy mb-4">Key Highlights</h2>
+                <ul className="space-y-3">
+                  {post.highlightPoints.map((point, index) => (
+                    <li key={index} className="font-open-sans text-gray-700 leading-relaxed text-lg flex items-start">
+                      <span className="text-gold mr-3 mt-1">•</span>
+                      <span>{point}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Quotes */}
+            {post?.quotes && Array.isArray(post.quotes) && post.quotes.length > 0 && (
+              <div className="mt-12 mb-8">
+                <h2 className="font-playfair text-2xl font-bold text-navy mb-4">Notable Quotes</h2>
+                {post.quotes.map((quote, index) => (
+                  <blockquote 
+                    key={index} 
+                    className="font-playfair text-xl italic text-gray-600 border-l-4 border-gold pl-6 py-4 my-4 bg-gray-50 rounded-r-lg"
+                  >
+                    "{quote}"
+                  </blockquote>
+                ))}
               </div>
             )}
           </div>

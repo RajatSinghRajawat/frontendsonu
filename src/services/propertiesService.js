@@ -2,6 +2,11 @@ import api from '../config/api';
 import { BACKEND_URL } from '../config/api';
 
 export const propertiesService = {
+  // Get property count
+  getPropertyCount: async () => {
+    return await api.get('/properties/count');
+  },
+
   // Get all properties with optional filters
   getAllProperties: async (filters = {}) => {
     const params = new URLSearchParams();

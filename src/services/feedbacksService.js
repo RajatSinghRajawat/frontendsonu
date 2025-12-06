@@ -1,6 +1,11 @@
 import api from '../config/api';
 
 export const feedbacksService = {
+  // Get feedback count
+  getFeedbackCount: async () => {
+    return await api.get('/feedbacks/count');
+  },
+
   // Create feedback (public)
   createFeedback: async (feedbackData) => {
     return await api.post('/feedbacks', feedbackData);
