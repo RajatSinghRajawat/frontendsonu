@@ -949,6 +949,17 @@ const BlogManagement = () => {
           blog={selectedBlog}
           onClose={() => setSelectedBlog(null)}
         />
+
+        {/* Delete confirmation */}
+        <DeleteConfirmationModal
+          isOpen={showDeleteModal}
+          onClose={() => {
+            setShowDeleteModal(false);
+            setItemToDelete(null);
+          }}
+          onConfirm={handleDeleteConfirm}
+          itemName="blog post"
+        />
       </div>
     </Layout>
   );
